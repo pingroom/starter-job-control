@@ -1,0 +1,17 @@
+{
+  "runId": "batch-001",
+  "items": [
+    {
+      "id": "one",
+      "text": "first sample"
+    },
+    {
+      "id": "two",
+      "text": "second sample"
+    },
+    {
+      "id": "three",
+      "text": "third sample"
+    }
+  ]
+}

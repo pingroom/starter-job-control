@@ -1,0 +1,23 @@
+{
+  "name": "pingroom-starter-job-control",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "license": "MIT",
+  "description": "Pause, resume, or cancel remaining local batch work through trusted PingRoom actions.",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "start": "node src/cli.js tick",
+    "init": "node src/cli.js init",
+    "status": "node src/cli.js status",
+    "connect": "node src/cli.js connect",
+    "inspect": "node src/cli.js inspect",
+    "demo": "node src/demo.js",
+    "test": "node --test"
+  },
+  "dependencies": {
+    "@pingroom/sdk": "0.6.0"
+  }
+}

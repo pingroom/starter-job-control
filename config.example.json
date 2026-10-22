@@ -1,0 +1,8 @@
+{
+  "pauseAction": 1,
+  "resumeAction": 2,
+  "cancelAction": 3,
+  "controllers": [
+    "11111111-1111-4111-8111-111111111111"
+  ]
+}
