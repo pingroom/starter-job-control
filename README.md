@@ -35,6 +35,8 @@ Set the three action slot numbers and the controller UUIDs in `config.json`. Rep
 
 Pairing saves ignored `.pingroom/credentials.json` with private permissions. An interrupted pairing reuses its saved link. An existing connection is never overwritten. After confirming a saved link has expired, remove only `.pingroom/pairing.json` before reconnecting.
 
+Before registration, setup saves a private creation intent in `.pingroom/pairing.json`. A crash or lost response before the pairing details are saved leaves an uncertain outcome; running `connect` again refuses another registration. Keep that file and inspect Connected Agents. Resolve or revoke any created robot before archiving the file for an intentional new setup. This requires manual investigation and does not guarantee exactly-once robot creation. If a crash leaves `.pingroom/.lock`, confirm the setup process stopped before removing only that lock.
+
 For an existing connection, set both `PINGROOM_TOKEN` and `PINGROOM_ROOM` in the shell or `.env`. Shell values take precedence; a complete environment pair overrides saved credentials, while blank or partial pairs fail. `.env.example` contains commented placeholders. Configuration, credentials, and state paths resolve from this project directory.
 
 ## Initialize and run checkpoints

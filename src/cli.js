@@ -15,10 +15,16 @@ async function connect() {
     const client = makeClient({ signal: controller.signal, pairing: true });
     let pending = await readJson(join(credentialDirectory, 'pairing.json'), 64 * 1024);
     if (pending === null) {
+      controller.signal.throwIfAborted();
+      const createdAt = Date.now();
+      // A lost registration or pairing response must not authorize another POST.
+      await atomicJson(credentialDirectory, 'pairing.json', { phase: 'creating', createdAt }, 64 * 1024);
+      controller.signal.throwIfAborted();
       const pairing = await client.auth.startPairing({ agent_label: 'Job control' });
-      pending = { pairing, token: client.getToken(), createdAt: Date.now() };
+      pending = { pairing, token: client.getToken(), createdAt };
       await atomicJson(credentialDirectory, 'pairing.json', pending, 64 * 1024);
     }
+    if (pending.phase === 'creating') throw new Error('Pairing creation is uncertain. Keep .pingroom/pairing.json and inspect Connected Agents. Resolve or revoke any created robot before archiving this file for an intentional new setup.');
     if (typeof pending.token !== 'string' || !pending.token || !Number.isSafeInteger(pending.createdAt)
       || !Number.isInteger(pending.pairing?.expires_in) || pending.pairing.expires_in < 1 || pending.pairing.expires_in > 3600) throw new Error('Invalid saved pairing; inspect it before reconnecting.');
     const remaining = Math.floor((pending.createdAt + pending.pairing.expires_in * 1000 - Date.now()) / 1000);
