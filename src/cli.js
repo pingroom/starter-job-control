@@ -29,8 +29,8 @@ async function connect() {
       || !Number.isInteger(pending.pairing?.expires_in) || pending.pairing.expires_in < 1 || pending.pairing.expires_in > 3600) throw new Error('Invalid saved pairing; inspect it before reconnecting.');
     const remaining = Math.floor((pending.createdAt + pending.pairing.expires_in * 1000 - Date.now()) / 1000);
     if (remaining <= 0) throw new Error('Saved pairing expired. Remove only .pingroom/pairing.json after confirming it is no longer usable, then reconnect.');
-    const url = new URL(pending.pairing.pair_browser_url);
-    if (url.origin !== 'https://pingroom.io' || url.username || url.password) throw new Error('Unexpected pairing URL.');
+    const url = new URL(pending.pairing.pair_browser_url ?? pending.pairing.pair_url);
+    if (!['https://pingroom.io', 'https://api.pingroom.io'].includes(url.origin) || url.username || url.password) throw new Error('Unexpected pairing URL.');
     client.setToken(pending.token);
     console.log('Install PingRoom: https://pingroom.io/i');
     console.log(`Approve the job controller and select your shared private room: ${url.href}`);
