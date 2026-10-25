@@ -11,7 +11,7 @@ process.once('SIGINT', stop); process.once('SIGTERM', stop);
 async function connect() {
   const release = await acquireLock(credentialDirectory);
   try {
-    if (await readJson(join(credentialDirectory, 'credentials.json'), 32 * 1024)) throw new Error('Saved connection already exists; inspect it or archive it deliberately before reconnecting.');
+    if (await readJson(join(credentialDirectory, 'credentials.json'), 32 * 1024) !== null) throw new Error('Saved connection already exists; inspect it or archive it deliberately before reconnecting.');
     const client = makeClient({ signal: controller.signal, pairing: true });
     let pending = await readJson(join(credentialDirectory, 'pairing.json'), 64 * 1024);
     if (pending === null) {

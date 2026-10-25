@@ -79,3 +79,19 @@ test('saved API-hosted pairing resumes without another registration or pairing P
   assert.deepEqual(await f.calls(), [{ method: 'GET', path: '/api/agent/auth/pair/status' }]);
   assert.equal((await f.read('credentials.json')).token, 'offline-active');
 });
+
+test('existing malformed credential values are preserved without any network request', async t => {
+  for (const saved of [false, 0, '']) {
+    const f = await fixture(t);
+    await mkdir(join(f.directory, '.pingroom'), { mode: 0o700 });
+    const path = join(f.directory, '.pingroom', 'credentials.json');
+    const contents = JSON.stringify(saved);
+    await writeFile(path, contents, { mode: 0o600 });
+    const result = f.run();
+    assert.equal(result.status, 1);
+    assert.match(result.stderr, /Saved connection already exists/);
+    assert.deepEqual(await f.calls(), []);
+    assert.equal(await readFile(path, 'utf8'), contents);
+    await assert.rejects(f.read('pairing.json'), { code: 'ENOENT' });
+  }
+});
